@@ -1,0 +1,16 @@
+[Unit]
+Description=Gunicorn is a Python WSGI HTTP Server for UNIX
+After=network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=forking
+PIDFile=/run/gunicorn.pid
+ExecStartPre=/usr/bin/rm -f /run/gunicorn.pid
+ExecStartPre=/usr/bin/gunicorn --check-config -c /etc/gunicorn.conf.py main:app
+ExecStart=/usr/bin/gunicorn -c /etc/gunicorn.conf.py main:app
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=process
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
